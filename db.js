@@ -1,8 +1,12 @@
 import mongoose from 'mongoose';
+import dotenv from 'dotenv';
+
+// Cargar las variables de entorno desde el archivo .env
+dotenv.config();
 
 const connectDB = async () => {
     try {
-        await mongoose.connect('mongodb+srv://ibarraorvil:Sooth0212@cluster0.dh71ixn.mongodb.net/specmx', {
+        await mongoose.connect(process.env.MONGO_URI, {
             useNewUrlParser: true,
             useUnifiedTopology: true
         });
