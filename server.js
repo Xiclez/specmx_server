@@ -8,6 +8,7 @@ import connectDB from './db.js'
 import indicatorsRouter from './routes/indicators.routes.js'; 
 import blogRouter from './routes/blog.routes.js'
 import authRouter from './routes/auth.routes.js'
+import clientRouter from './routes/client.routes.js';
 
 dotenv.config();
 connectDB();
@@ -24,6 +25,7 @@ app.use(fileUpload({ useTempFiles: true }));
 app.use('/api/indicators', indicatorsRouter);
 app.use('/api/blog',blogRouter)
 app.use('/api/auth',authRouter)
+app.use('/api/client',clientRouter)
 
 app.listen(port, () => {
     console.log(`Servidor corriendo en http://localhost:${port}`);
