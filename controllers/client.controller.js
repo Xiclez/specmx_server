@@ -5,8 +5,22 @@ import cheerio from 'cheerio';
 // Crear un nuevo cliente
 export const createClient = async (req, res) => {
     try {
-        const clientData = req.body;
-        const newClient = new Cliente(clientData);
+        const { datosIdentificacion, datosUbicacion, caracteristicasFiscales } = req.body;
+
+        if (!datosIdentificacion || Object.keys(datosIdentificacion).length === 0) {
+            return res.status(400).send('datosIdentificacion es requerido.');
+        }
+
+        if (!datosUbicacion || Object.keys(datosUbicacion).length === 0) {
+            return res.status(400).send('datosUbicacion es requerido.');
+        }
+
+        const newClient = new Cliente({
+            datosIdentificacion,
+            datosUbicacion,
+            caracteristicasFiscales
+        });
+
         await newClient.save();
         res.status(201).json(newClient);
     } catch (error) {
@@ -14,6 +28,7 @@ export const createClient = async (req, res) => {
         res.status(500).send('Error al crear el cliente');
     }
 };
+
 
 // Obtener todos los clientes
 export const getClients = async (req, res) => {

@@ -1,17 +1,17 @@
 import mongoose from 'mongoose';
 
 const datosIdentificacionSchema = new mongoose.Schema({
-    CURP: { type: String },
-    Nombre: { type: String },
-    ApellidoPaterno: { type: String },
-    ApellidoMaterno: { type: String },
-    FechaNacimiento: { type: String },
+    CURP: { type: String, default: null },
+    Nombre: { type: String, default: null },
+    ApellidoPaterno: { type: String , default: null},
+    ApellidoMaterno: { type: String , default: null},
+    FechaNacimiento: { type: String , default: null},
     FechaInicioOperaciones: { type: String, required: true },
     SituacionContribuyente: { type: String, required: true },
     FechaUltimoCambioSituacion: { type: String, required: true },
-    DenominacionRazonSocial: { type: String },
-    RegimenCapital: { type: String },
-    FechaConstitucion: { type: String }
+    DenominacionRazonSocial: { type: String , default: null },
+    RegimenCapital: { type: String , default: null},
+    FechaConstitucion: { type: String , default: null}
 });
 
 const datosUbicacionSchema = new mongoose.Schema({
@@ -35,7 +35,9 @@ const caracteristicasFiscalesSchema = new mongoose.Schema({
 const clienteSchema = new mongoose.Schema({
     datosIdentificacion: { type: datosIdentificacionSchema, required: true },
     datosUbicacion: { type: datosUbicacionSchema, required: true },
-    caracteristicasFiscales: { type: [caracteristicasFiscalesSchema], default: [] }
+    caracteristicasFiscales: { type: [caracteristicasFiscalesSchema], default: [] },
+    profilePhoto: { type: String, default: null },  // URL de la foto de perfil
+    files: { type: [String], default: [] }  // URLs de archivos adicionales
 });
 
 const Cliente = mongoose.model('Cliente', clienteSchema);
