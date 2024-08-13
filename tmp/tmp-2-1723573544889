@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF QR Code Scanner</title>
+    <!-- Include pdfjs-dist -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.12.313/pdf.min.js"></script>
+    <!-- Include jsQR -->
+    <script src="https://cdn.jsdelivr.net/npm/jsqr/dist/jsQR.min.js"></script>
+</head>
+<body>
+    <input type="file" id="pdf-upload" />
+    <div id="qr-result"></div>
+    <div id="quadrants-container">
+        <canvas id="quadrant1-canvas" style="border:1px solid black;"></canvas>
+        <canvas id="quadrant2-canvas" style="border:1px solid black;"></canvas>
+        <canvas id="quadrant3-canvas" style="border:1px solid black;"></canvas>
+        <canvas id="quadrant4-canvas" style="border:1px solid black;"></canvas>
+    </div>
+
+    <script>
+        document.getElementById('pdf-upload').addEventListener('change', async function (e) {
+            const file = e.target.files[0];
+            if (file && file.type === 'application/pdf') {
+                const arrayBuffer = await file.arrayBuffer();
+
+                // Load the PDF document
+                const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
+                const pdfDoc = await loadingTask.promise;
+                const firstPage = await pdfDoc.getPage(1);
+
+                // Get viewport for the page
+                const viewport = firstPage.getViewport({ scale: 1 });
+                const { width, height } = viewport;
+
+                const quadrantWidth = width / 2;
+                const quadrantHeight = height / 2;
+
+                // Function to render and scan each quadrant
+                async function renderAndScanQuadrant(canvasId, offsetX, offsetY, quadrantNumber) {
+                    const canvas = document.getElementById(canvasId);
+                    const ctx = canvas.getContext('2d');
+                    canvas.width = quadrantWidth;
+                    canvas.height = quadrantHeight;
+
+                    const renderContext = {
+                        canvasContext: ctx,
+                        viewport: viewport,
+                        transform: [1, 0, 0, 1, -offsetX, -offsetY],
+                    };
+
+                    await firstPage.render(renderContext).promise;
+
+                    // Get image data and scan for QR code
+                    const imageData = ctx.getImageData(0, 0, quadrantWidth, quadrantHeight);
+                    const code = jsQR(imageData.data, quadrantWidth, quadrantHeight);
+
+                    if (code) {
+                        document.getElementById('qr-result').innerText += `QR Code found in Quadrant ${quadrantNumber}: ${code.data}\n`;
+                    } else {
+                        document.getElementById('qr-result').innerText += `No QR code found in Quadrant ${quadrantNumber}.\n`;
+                    }
+                }
+
+                // Render and scan all four quadrants
+                await renderAndScanQuadrant('quadrant1-canvas', 0, height / 2, 1); // Top-left
+                await renderAndScanQuadrant('quadrant2-canvas', width / 2, height / 2, 2); // Top-right
+                await renderAndScanQuadrant('quadrant3-canvas', 0, 0, 3); // Bottom-left
+                await renderAndScanQuadrant('quadrant4-canvas', width / 2, 0, 4); // Bottom-right
+            } else {
+                alert('Please upload a valid PDF file.');
+            }
+        });
+    </script>
+</body>
+</html>
+

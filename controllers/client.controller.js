@@ -5,7 +5,7 @@ import cheerio from 'cheerio';
 // Crear un nuevo cliente
 export const createClient = async (req, res) => {
     try {
-        const { datosIdentificacion, datosUbicacion, caracteristicasFiscales } = req.body;
+        const { datosIdentificacion, datosUbicacion, caracteristicasFiscales,profilePhoto,files } = req.body;
 
         if (!datosIdentificacion || Object.keys(datosIdentificacion).length === 0) {
             return res.status(400).send('datosIdentificacion es requerido.');
@@ -18,7 +18,9 @@ export const createClient = async (req, res) => {
         const newClient = new Cliente({
             datosIdentificacion,
             datosUbicacion,
-            caracteristicasFiscales
+            caracteristicasFiscales,
+            profilePhoto,
+            files
         });
 
         await newClient.save();
@@ -87,7 +89,13 @@ export const deleteClient = async (req, res) => {
     }
 };
 
-// Obtener datos del cliente desde un URL escaneado (QR)
+/// Helper function to format dates from DD-MM-YYYY to YYYY-MM-DD
+const formatDateToYMD = (date) => {
+    if (!date) return null;
+    const [day, month, year] = date.split('-');
+    return `${year}-${month}-${day}`;
+};
+
 export const getCSFData = async (req, res) => {
     const { url } = req.body;
 
@@ -112,13 +120,13 @@ export const getCSFData = async (req, res) => {
             if (key.includes('Nombre')) datosIdentificacion.Nombre = value;
             if (key.includes('Apellido Paterno')) datosIdentificacion.ApellidoPaterno = value;
             if (key.includes('Apellido Materno')) datosIdentificacion.ApellidoMaterno = value;
-            if (key.includes('Fecha Nacimiento')) datosIdentificacion.FechaNacimiento = value;
-            if (key.includes('Fecha de Inicio de operaciones')) datosIdentificacion.FechaInicioOperaciones = value;
+            if (key.includes('Fecha Nacimiento')) datosIdentificacion.FechaNacimiento = formatDateToYMD(value);
+            if (key.includes('Fecha de Inicio de operaciones')) datosIdentificacion.FechaInicioOperaciones = formatDateToYMD(value);
             if (key.includes('Situación del contribuyente')) datosIdentificacion.SituacionContribuyente = value;
-            if (key.includes('Fecha del último cambio de situación')) datosIdentificacion.FechaUltimoCambioSituacion = value;
+            if (key.includes('Fecha del último cambio de situación')) datosIdentificacion.FechaUltimoCambioSituacion = formatDateToYMD(value);
             if (key.includes('Denominación o Razón Social')) datosIdentificacion.DenominacionRazonSocial = value;
             if (key.includes('Régimen de capital')) datosIdentificacion.RegimenCapital = value;
-            if (key.includes('Fecha de constitución')) datosIdentificacion.FechaConstitucion = value;
+            if (key.includes('Fecha de constitución')) datosIdentificacion.FechaConstitucion = formatDateToYMD(value);
         });
 
         // Datos de Ubicación
@@ -150,7 +158,7 @@ export const getCSFData = async (req, res) => {
                 if (nextRow.length) {
                     const nextKey = nextRow.find('td').first().text().trim();
                     if (nextKey.includes('Fecha de alta')) {
-                        regimen.FechaAlta = nextRow.find('td').last().text().trim();
+                        regimen.FechaAlta = formatDateToYMD(nextRow.find('td').last().text().trim());
                     }
                 }
                 caracteristicasFiscales.push(regimen);
