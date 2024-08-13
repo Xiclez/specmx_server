@@ -10,6 +10,7 @@ import blogRouter from './routes/blog.routes.js'
 import authRouter from './routes/auth.routes.js'
 import clientRouter from './routes/client.routes.js';
 import helperRouter from './routes/helper.routes.js';
+import orderRouter from './routes/order.routes.js';
 
 dotenv.config();
 connectDB();
@@ -28,6 +29,7 @@ app.use('/api/blog',blogRouter)
 app.use('/api/auth',authRouter)
 app.use('/api/client',clientRouter)
 app.use('/api/helper',helperRouter)
+app.use('/api/order',orderRouter)
 
 app.listen(port, () => {
     console.log(`Servidor corriendo en http://localhost:${port}`);

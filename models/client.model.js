@@ -5,13 +5,13 @@ const datosIdentificacionSchema = new mongoose.Schema({
     Nombre: { type: String, default: null },
     ApellidoPaterno: { type: String, default: null },
     ApellidoMaterno: { type: String, default: null },
-    FechaNacimiento: { type: Date, default: null },
-    FechaInicioOperaciones: { type: Date, required: true },
+    FechaNacimiento: { type: String, default: null },
+    FechaInicioOperaciones: { type: String, required: true },
     SituacionContribuyente: { type: String, required: true },
-    FechaUltimoCambioSituacion: { type: Date, required: true },
+    FechaUltimoCambioSituacion: { type: String, required: true },
     DenominacionRazonSocial: { type: String, default: null },
     RegimenCapital: { type: String, default: null },
-    FechaConstitucion: { type: Date, default: null }
+    FechaConstitucion: { type: String, default: null }
 });
 
 const datosUbicacionSchema = new mongoose.Schema({
@@ -29,7 +29,7 @@ const datosUbicacionSchema = new mongoose.Schema({
 
 const caracteristicasFiscalesSchema = new mongoose.Schema({
     Regimen: { type: String, required: true },
-    FechaAlta: { type: Date, default: null }
+    FechaAlta: { type: String, default: null }
 });
 
 const clienteSchema = new mongoose.Schema({
