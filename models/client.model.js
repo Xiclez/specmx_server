@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 
 const datosIdentificacionSchema = new mongoose.Schema({
+    RFC: { type: String, default: null },
     CURP: { type: String, default: null },
     Nombre: { type: String, default: null },
     ApellidoPaterno: { type: String, default: null },
@@ -38,7 +39,7 @@ const clienteSchema = new mongoose.Schema({
     caracteristicasFiscales: { type: [caracteristicasFiscalesSchema], default: [] },
     profilePhoto: { type: String, default: null },  // URL de la foto de perfil
     files: { type: [String], default: [] }  // URLs de archivos adicionales
-});
+},{ timestamps: true });
 
 const Cliente = mongoose.model('Cliente', clienteSchema);
 

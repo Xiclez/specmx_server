@@ -110,7 +110,14 @@ export const getCSFData = async (req, res) => {
 
         const datosIdentificacion = {};
         const datosUbicacion = {};
-        const caracteristicasFiscales = [];
+        let caracteristicasFiscales = [];
+
+        // Extracción del RFC
+        const rfcText = $('li').filter((i, el) => $(el).text().includes('El RFC:')).text().trim();
+        const rfcMatch = rfcText.match(/RFC:\s*([A-Z0-9]+)/);
+        if (rfcMatch && rfcMatch[1]) {
+            datosIdentificacion.RFC = rfcMatch[1];
+        }
 
         // Datos de Identificación
         $('#ubicacionForm\\:j_idt13\\:0\\:j_idt15 table tbody tr, #ubicacionForm\\:j_idt15\\:0\\:j_idt16 table tbody tr').each((i, elem) => {
@@ -165,6 +172,9 @@ export const getCSFData = async (req, res) => {
             }
         });
 
+        // Filtrar características fiscales para eliminar objetos con campos vacíos
+        caracteristicasFiscales = caracteristicasFiscales.filter(item => item.Regimen && item.FechaAlta);
+
         res.json({
             datosIdentificacion,
             datosUbicacion,
@@ -175,3 +185,5 @@ export const getCSFData = async (req, res) => {
         res.status(500).send('Error en la consulta');
     }
 };
+
+
