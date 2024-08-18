@@ -24,8 +24,8 @@ const datosUbicacionSchema = new mongoose.Schema({
     NumeroExterior: { type: String, required: true },
     NumeroInterior: { type: String },
     CP: { type: String, required: true },
-    CorreoElectronico: { type: String, required: true },
-    AL: { type: String, required: true }
+    CorreoElectronico: { type: String, required: true }
+    //AL: { type: String, required: true }
 });
 
 const caracteristicasFiscalesSchema = new mongoose.Schema({
