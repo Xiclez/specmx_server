@@ -1,34 +1,36 @@
-import FormData from 'form-data';
-import axios from 'axios';
 import fs from 'fs';
+import cloudinary from 'cloudinary';
 
-const CLOUDINARY_URL = 'https://api.cloudinary.com/v1_1/dgyepdjut/image/upload';
-const CLOUDINARY_UPLOAD_PRESET = 'specmx';
+// Configuración de Cloudinary
+cloudinary.v2.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
+// Función para subir un archivo a Cloudinary usando Multer
 export const uploadToCloudinary = async (req, res) => {
     try {
-        if (!req.files || Object.keys(req.files).length === 0) {
-            return res.status(400).send('No files were uploaded.');
+        // Primero verifica si el campo 'image' está presente para la foto de perfil
+        const file = req.files.image ? req.files.image[0] : req.files.file[0];
+
+        if (!file || !file.path) {
+            return res.status(400).json({ error: 'No se encontró el archivo en la solicitud' });
         }
 
-        const file = req.files.image;
-        const tempFilePath = file.tempFilePath;
+        const filePath = file.path; // Este campo es llenado por Multer
 
-        const formData = new FormData();
-        formData.append('file', fs.createReadStream(tempFilePath));
-        formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
-
-        const response = await axios.post(CLOUDINARY_URL, formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data',
-            },
+        const result = await cloudinary.v2.uploader.upload(filePath, {
+            folder: 'your_folder_name', // Ajusta el nombre de la carpeta en Cloudinary
+            resource_type: 'auto', // Para manejar diferentes tipos de archivos
         });
 
-        fs.unlinkSync(tempFilePath); // Eliminar el archivo temporal
+        // Elimina el archivo temporal después de subir a Cloudinary
+        fs.unlinkSync(filePath);
 
-        res.json({ url: response.data.secure_url });
+        res.json({ url: result.secure_url });
     } catch (error) {
-        console.error('Error uploading to Cloudinary:', error);
-        res.status(500).json({ error: 'Failed to upload media to Cloudinary' });
+        console.error('Error subiendo a Cloudinary:', error);
+        res.status(500).json({ error: 'No se pudo subir el archivo a Cloudinary' });
     }
 };
