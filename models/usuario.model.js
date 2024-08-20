@@ -1,25 +1,24 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 
-const userSchema = new mongoose.Schema({
+const usuarioSchema = new mongoose.Schema({
     nombre: { type: String, required: true },
     apellido: { type: String, required: true },
     username: { type: String, required: true, unique: true },
+    telefono: { type: String, required: true },
     email: { type: String, required: true, unique: true },
-    telefono: { type: String },
     password: { type: String, required: true },
     rol: { 
         type: String, 
-        enum: ['Administrador', 'Cliente', 'Colaborador'], 
-        default: 'Usuario',
+        enum: ['Administrador', 'Contador', 'Consultor', 'Abogado', 'Usuario'], 
         required: true 
     },
-    clienteId: { type: mongoose.Schema.Types.ObjectId, ref: 'Cliente', required: false }, // No es obligatorio
-    colaboradorId: { type: mongoose.Schema.Types.ObjectId, ref: 'Colaborador', required: false }, // No es obligatorio
+    clienteId: { type: mongoose.Schema.Types.ObjectId, ref: 'Cliente' },
+    colaboradorId: { type: mongoose.Schema.Types.ObjectId, ref: 'Colaborador' }
 }, { timestamps: true });
 
 // Hash the password before saving the user model
-userSchema.pre('save', async function (next) {
+usuarioSchema.pre('save', async function (next) {
     if (!this.isModified('password')) {
         return next();
     }
@@ -33,10 +32,9 @@ userSchema.pre('save', async function (next) {
 });
 
 // Method to compare passwords
-userSchema.methods.comparePassword = function (candidatePassword) {
+usuarioSchema.methods.comparePassword = function (candidatePassword) {
     return bcrypt.compare(candidatePassword, this.password);
 };
 
-const User = mongoose.model('User', userSchema);
-
-export default User;
+const Usuario = mongoose.model('Usuario', usuarioSchema);
+export default Usuario;

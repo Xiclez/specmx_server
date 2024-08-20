@@ -176,10 +176,27 @@ export const getCSFData = async (req, res) => {
         caracteristicasFiscales = caracteristicasFiscales.filter(item => item.Regimen && item.FechaAlta);
 
         res.json({
-            datosIdentificacion,
-            datosUbicacion,
-            caracteristicasFiscales
+            Nombre: datosIdentificacion.Nombre,
+            ApellidoPaterno: datosIdentificacion.ApellidoPaterno,
+            ApellidoMaterno: datosIdentificacion.ApellidoMaterno || null,
+            FechaNacimiento: datosIdentificacion.FechaNacimiento || null,
+            direccion: [
+                {
+                    EntidadFederativa: datosUbicacion.EntidadFederativa,
+                    MunicipioDelegacion: datosUbicacion.MunicipioDelegacion,
+                    Colonia: datosUbicacion.Colonia,
+                    NombreVialidad: datosUbicacion.NombreVialidad,
+                    NumeroExterior: datosUbicacion.NumeroExterior,
+                    NumeroInterior: datosUbicacion.NumeroInterior || null,
+                    CP: datosUbicacion.CP
+                }
+            ],
+            telefono: datosUbicacion.telefono || null,
+            email: datosUbicacion.CorreoElectronico,
+            CURP: datosIdentificacion.CURP || null,
+            RFC: datosIdentificacion.RFC
         });
+        
     } catch (error) {
         console.error(error);
         res.status(500).send('Error en la consulta');
