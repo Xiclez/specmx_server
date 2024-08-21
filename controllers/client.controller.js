@@ -180,18 +180,16 @@ export const getCSFData = async (req, res) => {
             ApellidoPaterno: datosIdentificacion.ApellidoPaterno,
             ApellidoMaterno: datosIdentificacion.ApellidoMaterno || null,
             FechaNacimiento: datosIdentificacion.FechaNacimiento || null,
-            direccion: [
-                {
-                    EntidadFederativa: datosUbicacion.EntidadFederativa,
-                    MunicipioDelegacion: datosUbicacion.MunicipioDelegacion,
-                    Colonia: datosUbicacion.Colonia,
-                    NombreVialidad: datosUbicacion.NombreVialidad,
-                    NumeroExterior: datosUbicacion.NumeroExterior,
-                    NumeroInterior: datosUbicacion.NumeroInterior || null,
-                    CP: datosUbicacion.CP
-                }
-            ],
-            telefono: datosUbicacion.telefono || null,
+            DenominacionRazonSocial: datosIdentificacion.DenominacionRazonSocial,
+            RegimenCapital: datosIdentificacion.RegimenCapital,
+            FechaConstitucion: datosIdentificacion.FechaConstitucion || null,
+            EntidadFederativa: datosUbicacion.EntidadFederativa,
+            MunicipioDelegacion: datosUbicacion.MunicipioDelegacion,
+            Colonia: datosUbicacion.Colonia,
+            NombreVialidad: datosUbicacion.NombreVialidad,
+            NumeroExterior: datosUbicacion.NumeroExterior,
+            NumeroInterior: datosUbicacion.NumeroInterior || null,
+            CP: datosUbicacion.CP,
             email: datosUbicacion.CorreoElectronico,
             CURP: datosIdentificacion.CURP || null,
             RFC: datosIdentificacion.RFC

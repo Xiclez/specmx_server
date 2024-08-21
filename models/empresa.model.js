@@ -2,7 +2,6 @@ import mongoose from 'mongoose';
 
 
 const empresaSchema = new mongoose.Schema({
-    nombre: { type: String, required: true },
     DenominacionRazonSocial: { type: String, default: null },
     RegimenCapital: { type: String, default: null },
     FechaConstitucion: { type: String, default: null },
@@ -13,7 +12,7 @@ const empresaSchema = new mongoose.Schema({
     NumeroExterior: { type: String, required: true },
     NumeroInterior: { type: String },
     CP: { type: String, required: true },
-    telefono: { type: String, required: true },
+    telefono: { type: String, required: false },
     email: { type: String, required: false, unique: true },
     RFC: { type: String, required: true },
     sector: { type: String, default: null },

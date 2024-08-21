@@ -21,7 +21,7 @@ export const uploadToCloudinary = async (req, res) => {
         const filePath = file.path; // Este campo es llenado por Multer
 
         const result = await cloudinary.v2.uploader.upload(filePath, {
-            folder: 'your_folder_name', // Ajusta el nombre de la carpeta en Cloudinary
+            folder: 'specmx', // Ajusta el nombre de la carpeta en Cloudinary
             resource_type: 'auto', // Para manejar diferentes tipos de archivos
         });
 
