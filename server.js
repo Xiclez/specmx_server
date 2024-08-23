@@ -1,6 +1,5 @@
 import express from 'express';
 import cors from 'cors';
-import fetch from 'node-fetch';
 import dotenv from 'dotenv';
 import connectDB from './db.js';
 import indicatorsRouter from './routes/indicators.routes.js'; 
@@ -16,7 +15,6 @@ import tareaRouter from './routes/tarea.routes.js';
 import usuarioRouter from './routes/usuario.routes.js';
 import servicioRouter from './routes/servicio.routes.js';
 import helperRouter from './routes/helper.routes.js';
-import orderRouter from './routes/order.routes.js';
 
 dotenv.config();
 connectDB();
@@ -42,7 +40,6 @@ app.use('/api/tarea', tareaRouter);
 app.use('/api/usuario', usuarioRouter);
 app.use('/api/servicio', servicioRouter);
 app.use('/api/helper', helperRouter);
-app.use('/api/order', orderRouter);
 
 app.listen(port, () => {
     console.log(`Servidor corriendo en http://localhost:${port}`);
