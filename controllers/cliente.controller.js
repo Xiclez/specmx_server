@@ -2,30 +2,9 @@ import Cliente from '../models/cliente.model.js';
 
 // Crear un nuevo cliente
 export const createCliente = async (req, res) => {
-    const { Nombre, 
-            ApellidoPaterno, 
-            ApellidoMaterno, 
-            FechaNacimiento, 
-            EntidadFederativa,
-            MunicipioDelegacion,
-            Colonia,
-            NombreVialidad,
-            NumeroExterior,
-            NumeroInterior,
-            CP, 
-            telefono, 
-            CURP, 
-            RFC, 
-            profilePhoto, 
-            files, 
-            empresaId } = req.body;
+    const { Nombre, ApellidoPaterno, ApellidoMaterno, FechaNacimiento, EntidadFederativa, MunicipioDelegacion, Colonia, NombreVialidad, NumeroExterior, NumeroInterior, CP, telefono, CURP, RFC, files, empresaId } = req.body;
 
     try {
-        const existingCliente = await Cliente.findOne({ RFC });
-        if (existingCliente) {
-            return res.status(400).json({ error: 'El RFC ya está registrado para otro cliente' });
-        }
-
         const cliente = new Cliente({
             Nombre,
             ApellidoPaterno,
@@ -41,9 +20,8 @@ export const createCliente = async (req, res) => {
             telefono,
             CURP,
             RFC,
-            profilePhoto,
             files,
-            empresaId
+            empresaId: Array.isArray(empresaId) ? empresaId : (empresaId ? [empresaId] : [])
         });
 
         await cliente.save();
@@ -56,7 +34,7 @@ export const createCliente = async (req, res) => {
 // Obtener la lista de todos los clientes
 export const getClientes = async (req, res) => {
     try {
-        const clientes = await Cliente.find().populate('empresaId', 'nombre razonSocial'); // Populate para mostrar detalles de la empresa
+        const clientes = await Cliente.find().populate('empresaId', 'DenominacionRazonSocial');
         res.status(200).json(clientes);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -68,7 +46,7 @@ export const getClienteById = async (req, res) => {
     const { id } = req.params;
 
     try {
-        const cliente = await Cliente.findById(id).populate('empresaId', 'nombre razonSocial'); // Populate para mostrar detalles de la empresa
+        const cliente = await Cliente.findById(id).populate('empresaId', 'DenominacionRazonSocial');
         if (!cliente) {
             return res.status(404).json({ error: 'Cliente no encontrado' });
         }
@@ -81,7 +59,7 @@ export const getClienteById = async (req, res) => {
 // Actualizar un cliente por su ID
 export const updateCliente = async (req, res) => {
     const { id } = req.params;
-    const { nombre, apellidoPaterno, apellidoMaterno, fechaNacimiento, EntidadFederativa, MunicipioDelegacion,Colonia,NombreVialidad,NumeroExterior,NumeroInterior,CP, telefono, CURP, RFC, profilePhoto, files, empresaId } = req.body;
+    const { Nombre, ApellidoPaterno, ApellidoMaterno, FechaNacimiento, EntidadFederativa, MunicipioDelegacion, Colonia, NombreVialidad, NumeroExterior, NumeroInterior, CP, telefono, CURP, RFC, files, empresaId } = req.body;
 
     try {
         let cliente = await Cliente.findById(id);
@@ -89,10 +67,10 @@ export const updateCliente = async (req, res) => {
             return res.status(404).json({ error: 'Cliente no encontrado' });
         }
 
-        cliente.nombre = nombre || cliente.nombre;
-        cliente.apellidoPaterno = apellidoPaterno || cliente.apellidoPaterno;
-        cliente.apellidoMaterno = apellidoMaterno || cliente.apellidoMaterno;
-        cliente.fechaNacimiento = fechaNacimiento || cliente.fechaNacimiento;
+        cliente.Nombre = Nombre || cliente.Nombre;
+        cliente.ApellidoPaterno = ApellidoPaterno || cliente.ApellidoPaterno;
+        cliente.ApellidoMaterno = ApellidoMaterno || cliente.ApellidoMaterno;
+        cliente.FechaNacimiento = FechaNacimiento || cliente.FechaNacimiento;
         cliente.EntidadFederativa = EntidadFederativa || cliente.EntidadFederativa;
         cliente.MunicipioDelegacion = MunicipioDelegacion || cliente.MunicipioDelegacion;
         cliente.Colonia = Colonia || cliente.Colonia;
@@ -103,9 +81,17 @@ export const updateCliente = async (req, res) => {
         cliente.telefono = telefono || cliente.telefono;
         cliente.CURP = CURP || cliente.CURP;
         cliente.RFC = RFC || cliente.RFC;
-        cliente.profilePhoto = profilePhoto || cliente.profilePhoto;
-        cliente.files = files || cliente.files;
-        cliente.empresaId = empresaId || cliente.empresaId;
+
+        // Si se proporcionan nuevos archivos, agrégalos al array existente
+        if (files && files.length > 0) {
+            cliente.files = [...cliente.files, ...files];
+        }
+
+        // Si se proporcionan nuevos empresaId, agrégalos al array existente evitando duplicados
+        if (empresaId && empresaId.length > 0) {
+            const newEmpresaIds = Array.isArray(empresaId) ? empresaId : [empresaId];
+            cliente.empresaId = [...new Set([...cliente.empresaId.map(id => id.toString()), ...newEmpresaIds.map(id => id.toString())])];
+        }
 
         await cliente.save();
 

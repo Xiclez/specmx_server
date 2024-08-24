@@ -2,7 +2,7 @@ import Servicio from '../models/servicio.model.js';
 
 // Crear un nuevo servicio
 export const createServicio = async (req, res) => {
-    const { nombre, descripcion, precio, tipoServicio, proyectoId } = req.body;
+    const { nombre, descripcion, precio, tipoServicio, facturaId } = req.body;
 
     try {
         const servicio = new Servicio({
@@ -10,7 +10,7 @@ export const createServicio = async (req, res) => {
             descripcion,
             precio,
             tipoServicio,
-            proyectoId
+            facturaId: Array.isArray(facturaId) ? facturaId : (facturaId ? [facturaId] : [])
         });
 
         await servicio.save();
@@ -23,7 +23,7 @@ export const createServicio = async (req, res) => {
 // Obtener la lista de todos los servicios
 export const getServicios = async (req, res) => {
     try {
-        const servicios = await Servicio.find().populate('proyectoId', 'nombre descripcion');
+        const servicios = await Servicio.find().populate('facturaId', 'folio total');
         res.status(200).json(servicios);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -35,7 +35,7 @@ export const getServicioById = async (req, res) => {
     const { id } = req.params;
 
     try {
-        const servicio = await Servicio.findById(id).populate('proyectoId', 'nombre descripcion');
+        const servicio = await Servicio.findById(id).populate('facturaId', 'folio total');
         if (!servicio) {
             return res.status(404).json({ error: 'Servicio no encontrado' });
         }
@@ -48,7 +48,7 @@ export const getServicioById = async (req, res) => {
 // Actualizar un servicio por su ID
 export const updateServicio = async (req, res) => {
     const { id } = req.params;
-    const { nombre, descripcion, precio, tipoServicio, proyectoId } = req.body;
+    const { nombre, descripcion, precio, tipoServicio, facturaId } = req.body;
 
     try {
         let servicio = await Servicio.findById(id);
@@ -60,7 +60,7 @@ export const updateServicio = async (req, res) => {
         servicio.descripcion = descripcion || servicio.descripcion;
         servicio.precio = precio || servicio.precio;
         servicio.tipoServicio = tipoServicio || servicio.tipoServicio;
-        servicio.proyectoId = proyectoId || servicio.proyectoId;
+        servicio.facturaId = facturaId ? (Array.isArray(facturaId) ? facturaId : [facturaId]) : servicio.facturaId;
 
         await servicio.save();
 

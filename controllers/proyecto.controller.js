@@ -2,7 +2,7 @@ import Proyecto from '../models/proyecto.model.js';
 
 // Crear un nuevo proyecto
 export const createProyecto = async (req, res) => {
-    const { nombre, descripcion, fechaInicio, fechaFin, estado, files, clienteId } = req.body;
+    const { nombre, descripcion, fechaInicio, fechaFin, estado, files, servicioId, tareaId } = req.body;
 
     try {
         const proyecto = new Proyecto({
@@ -12,7 +12,8 @@ export const createProyecto = async (req, res) => {
             fechaFin,
             estado,
             files,
-            clienteId
+            servicioId: Array.isArray(servicioId) ? servicioId : (servicioId ? [servicioId] : []),
+            tareaId: Array.isArray(tareaId) ? tareaId : (tareaId ? [tareaId] : [])
         });
 
         await proyecto.save();
@@ -25,7 +26,7 @@ export const createProyecto = async (req, res) => {
 // Obtener la lista de todos los proyectos
 export const getProyectos = async (req, res) => {
     try {
-        const proyectos = await Proyecto.find().populate('clienteId', 'nombre direccion');
+        const proyectos = await Proyecto.find().populate('servicioId', 'nombre descripcion').populate('tareaId', 'nombre descripcion');
         res.status(200).json(proyectos);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -37,7 +38,7 @@ export const getProyectoById = async (req, res) => {
     const { id } = req.params;
 
     try {
-        const proyecto = await Proyecto.findById(id).populate('clienteId', 'nombre direccion');
+        const proyecto = await Proyecto.findById(id).populate('servicioId', 'nombre descripcion').populate('tareaId', 'nombre descripcion');
         if (!proyecto) {
             return res.status(404).json({ error: 'Proyecto no encontrado' });
         }
@@ -50,7 +51,7 @@ export const getProyectoById = async (req, res) => {
 // Actualizar un proyecto por su ID
 export const updateProyecto = async (req, res) => {
     const { id } = req.params;
-    const { nombre, descripcion, fechaInicio, fechaFin, estado, files, clienteId } = req.body;
+    const { nombre, descripcion, fechaInicio, fechaFin, estado, files, servicioId, tareaId } = req.body;
 
     try {
         let proyecto = await Proyecto.findById(id);
@@ -64,7 +65,8 @@ export const updateProyecto = async (req, res) => {
         proyecto.fechaFin = fechaFin || proyecto.fechaFin;
         proyecto.estado = estado || proyecto.estado;
         proyecto.files = files || proyecto.files;
-        proyecto.clienteId = clienteId || proyecto.clienteId;
+        proyecto.servicioId = servicioId ? (Array.isArray(servicioId) ? servicioId : [servicioId]) : proyecto.servicioId;
+        proyecto.tareaId = tareaId ? (Array.isArray(tareaId) ? tareaId : [tareaId]) : proyecto.tareaId;
 
         await proyecto.save();
 

@@ -3,7 +3,6 @@ import Empresa from '../models/empresa.model.js';
 // Crear una nueva empresa
 export const createEmpresa = async (req, res) => {
     const {
-        nombre,
         DenominacionRazonSocial,
         RegimenCapital,
         FechaConstitucion,
@@ -16,18 +15,13 @@ export const createEmpresa = async (req, res) => {
         CP,
         telefono,
         RFC,
-        sector, 
-        files
+        sector,
+        files,
+        proyectoId
     } = req.body;
 
     try {
-        const existingEmpresa = await Empresa.findOne({ RFC });
-        if (existingEmpresa) {
-            return res.status(400).json({ error: 'El RFC ya está registrado para otra empresa' });
-        }
-
         const empresa = new Empresa({
-            nombre,
             DenominacionRazonSocial,
             RegimenCapital,
             FechaConstitucion,
@@ -41,7 +35,8 @@ export const createEmpresa = async (req, res) => {
             telefono,
             RFC,
             sector,
-            files
+            files: Array.isArray(files) ? files : (files ? [files] : []),
+            proyectoId: Array.isArray(proyectoId) ? proyectoId : (proyectoId ? [proyectoId] : [])
         });
 
         await empresa.save();
@@ -54,7 +49,7 @@ export const createEmpresa = async (req, res) => {
 // Obtener la lista de todas las empresas
 export const getEmpresas = async (req, res) => {
     try {
-        const empresas = await Empresa.find();
+        const empresas = await Empresa.find().populate('proyectoId', 'nombre descripcion');
         res.status(200).json(empresas);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -66,7 +61,7 @@ export const getEmpresaById = async (req, res) => {
     const { id } = req.params;
 
     try {
-        const empresa = await Empresa.findById(id);
+        const empresa = await Empresa.findById(id).populate('proyectoId', 'nombre descripcion');
         if (!empresa) {
             return res.status(404).json({ error: 'Empresa no encontrada' });
         }
@@ -80,7 +75,6 @@ export const getEmpresaById = async (req, res) => {
 export const updateEmpresa = async (req, res) => {
     const { id } = req.params;
     const {
-        nombre,
         DenominacionRazonSocial,
         RegimenCapital,
         FechaConstitucion,
@@ -90,11 +84,12 @@ export const updateEmpresa = async (req, res) => {
         NombreVialidad,
         NumeroExterior,
         NumeroInterior,
-        CP, 
+        CP,
         telefono,
         RFC,
         sector,
-        files
+        files,
+        proyectoId
     } = req.body;
 
     try {
@@ -103,7 +98,6 @@ export const updateEmpresa = async (req, res) => {
             return res.status(404).json({ error: 'Empresa no encontrada' });
         }
 
-        empresa.nombre = nombre || empresa.nombre;
         empresa.DenominacionRazonSocial = DenominacionRazonSocial || empresa.DenominacionRazonSocial;
         empresa.RegimenCapital = RegimenCapital || empresa.RegimenCapital;
         empresa.FechaConstitucion = FechaConstitucion || empresa.FechaConstitucion;
@@ -117,7 +111,8 @@ export const updateEmpresa = async (req, res) => {
         empresa.telefono = telefono || empresa.telefono;
         empresa.RFC = RFC || empresa.RFC;
         empresa.sector = sector || empresa.sector;
-        empresa.files = files || empresa.files;
+        empresa.files = files ? (Array.isArray(files) ? files : [files]) : empresa.files;
+        empresa.proyectoId = proyectoId ? (Array.isArray(proyectoId) ? proyectoId : [proyectoId]) : empresa.proyectoId;
 
         await empresa.save();
 

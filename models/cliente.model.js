@@ -21,7 +21,17 @@ const clienteSchema = new mongoose.Schema({
     CURP: { type: String, default: null },
     RFC: { type: String, default: null },
     files: [fileSchema],
-    empresaId: { type: mongoose.Schema.Types.ObjectId, ref: 'Empresa', required: false }
+    empresaId: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Empresa',
+        required: false,
+        validate: {
+          validator: function(value) {
+            return !Array.isArray(value) || value.length === new Set(value.map(String)).size;
+          },
+          message: 'El cliente no puede estar registrado en la misma empresa más de una vez'
+        }
+    }]
 }, { timestamps: true });
 
 const Cliente = mongoose.model('Cliente', clienteSchema);

@@ -138,7 +138,6 @@ export const getCSFData = async (req, res) => {
             NumeroExterior: datosUbicacion.NumeroExterior,
             NumeroInterior: datosUbicacion.NumeroInterior || null,
             CP: datosUbicacion.CP,
-            email: datosUbicacion.CorreoElectronico,
             CURP: datosIdentificacion.CURP || null,
             RFC: datosIdentificacion.RFC
         });

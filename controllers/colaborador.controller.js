@@ -2,16 +2,15 @@ import Colaborador from '../models/colaborador.model.js';
 
 // Crear un nuevo colaborador
 export const createColaborador = async (req, res) => {
-    const { nombre, apellido, telefono, area, usuarioId } = req.body;
+    const { nombre, apellido, telefono, area, tareaId } = req.body;
 
     try {
-        
         const colaborador = new Colaborador({
             nombre,
             apellido,
             telefono,
             area,
-            usuarioId
+            tareaId: Array.isArray(tareaId) ? tareaId : (tareaId ? [tareaId] : [])
         });
 
         await colaborador.save();
@@ -24,7 +23,7 @@ export const createColaborador = async (req, res) => {
 // Obtener la lista de todos los colaboradores
 export const getColaboradores = async (req, res) => {
     try {
-        const colaboradores = await Colaborador.find().populate('usuarioId', 'nombre apellido username');
+        const colaboradores = await Colaborador.find().populate('tareaId', 'nombre descripcion');
         res.status(200).json(colaboradores);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -36,7 +35,7 @@ export const getColaboradorById = async (req, res) => {
     const { id } = req.params;
 
     try {
-        const colaborador = await Colaborador.findById(id).populate('usuarioId', 'nombre apellido username');
+        const colaborador = await Colaborador.findById(id).populate('tareaId', 'nombre descripcion');
         if (!colaborador) {
             return res.status(404).json({ error: 'Colaborador no encontrado' });
         }
@@ -49,7 +48,7 @@ export const getColaboradorById = async (req, res) => {
 // Actualizar un colaborador por su ID
 export const updateColaborador = async (req, res) => {
     const { id } = req.params;
-    const { nombre, apellido, telefono, area, usuarioId } = req.body;
+    const { nombre, apellido, telefono, area, tareaId } = req.body;
 
     try {
         let colaborador = await Colaborador.findById(id);
@@ -61,7 +60,7 @@ export const updateColaborador = async (req, res) => {
         colaborador.apellido = apellido || colaborador.apellido;
         colaborador.telefono = telefono || colaborador.telefono;
         colaborador.area = area || colaborador.area;
-        colaborador.usuarioId = usuarioId || colaborador.usuarioId;
+        colaborador.tareaId = tareaId ? (Array.isArray(tareaId) ? tareaId : [tareaId]) : colaborador.tareaId;
 
         await colaborador.save();
 
