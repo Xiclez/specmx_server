@@ -9,7 +9,7 @@ const SECRET_KEY = process.env.SECRET_KEY;
 
 // Registro de usuario
 export const register = async (req, res) => {
-    const { nombre, apellido, username, telefono, email, password, rol, clienteId, colaboradorId } = req.body;
+    const { nombre, apellido, username, telefono, email, password, profilePhoto, rol, clienteId, colaboradorId } = req.body;
 
     try {
         const existingUser = await User.findOne({ email });
@@ -24,12 +24,12 @@ export const register = async (req, res) => {
             telefono,
             email,
             password,
+            profilePhoto,
             rol,
             clienteId,
-            colaboradorId
+            colaboradorId,
         });
 
-        // La contraseña será encriptada automáticamente en el pre-save del modelo
         await user.save();
 
         const token = jwt.sign({ userId: user._id, rol: user.rol }, SECRET_KEY, { expiresIn: '1h' });

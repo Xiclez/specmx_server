@@ -2,19 +2,14 @@ import Colaborador from '../models/colaborador.model.js';
 
 // Crear un nuevo colaborador
 export const createColaborador = async (req, res) => {
-    const { nombre, apellido, telefono, email, area, usuarioId } = req.body;
+    const { nombre, apellido, telefono, area, usuarioId } = req.body;
 
     try {
-        const existingColaborador = await Colaborador.findOne({ email });
-        if (existingColaborador) {
-            return res.status(400).json({ error: 'El correo electrónico ya está registrado para otro colaborador' });
-        }
-
+        
         const colaborador = new Colaborador({
             nombre,
             apellido,
             telefono,
-            email,
             area,
             usuarioId
         });
@@ -54,7 +49,7 @@ export const getColaboradorById = async (req, res) => {
 // Actualizar un colaborador por su ID
 export const updateColaborador = async (req, res) => {
     const { id } = req.params;
-    const { nombre, apellido, telefono, email, area, usuarioId } = req.body;
+    const { nombre, apellido, telefono, area, usuarioId } = req.body;
 
     try {
         let colaborador = await Colaborador.findById(id);
@@ -65,7 +60,6 @@ export const updateColaborador = async (req, res) => {
         colaborador.nombre = nombre || colaborador.nombre;
         colaborador.apellido = apellido || colaborador.apellido;
         colaborador.telefono = telefono || colaborador.telefono;
-        colaborador.email = email || colaborador.email;
         colaborador.area = area || colaborador.area;
         colaborador.usuarioId = usuarioId || colaborador.usuarioId;
 

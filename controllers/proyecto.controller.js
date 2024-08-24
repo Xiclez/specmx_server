@@ -2,7 +2,7 @@ import Proyecto from '../models/proyecto.model.js';
 
 // Crear un nuevo proyecto
 export const createProyecto = async (req, res) => {
-    const { nombre, descripcion, fechaInicio, fechaFin, estado, clienteId } = req.body;
+    const { nombre, descripcion, fechaInicio, fechaFin, estado, files, clienteId } = req.body;
 
     try {
         const proyecto = new Proyecto({
@@ -11,6 +11,7 @@ export const createProyecto = async (req, res) => {
             fechaInicio,
             fechaFin,
             estado,
+            files,
             clienteId
         });
 
@@ -49,7 +50,7 @@ export const getProyectoById = async (req, res) => {
 // Actualizar un proyecto por su ID
 export const updateProyecto = async (req, res) => {
     const { id } = req.params;
-    const { nombre, descripcion, fechaInicio, fechaFin, estado, clienteId } = req.body;
+    const { nombre, descripcion, fechaInicio, fechaFin, estado, files, clienteId } = req.body;
 
     try {
         let proyecto = await Proyecto.findById(id);
@@ -62,6 +63,7 @@ export const updateProyecto = async (req, res) => {
         proyecto.fechaInicio = fechaInicio || proyecto.fechaInicio;
         proyecto.fechaFin = fechaFin || proyecto.fechaFin;
         proyecto.estado = estado || proyecto.estado;
+        proyecto.files = files || proyecto.files;
         proyecto.clienteId = clienteId || proyecto.clienteId;
 
         await proyecto.save();

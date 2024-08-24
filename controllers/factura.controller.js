@@ -2,13 +2,14 @@ import Factura from '../models/factura.model.js';
 
 // Crear una nueva factura
 export const createFactura = async (req, res) => {
-    const { fechaEmision, monto, estado, servicioId } = req.body;
+    const { fechaEmision, monto, estado, files, servicioId } = req.body;
 
     try {
         const factura = new Factura({
             fechaEmision,
             monto,
             estado,
+            files,
             servicioId
         });
 
@@ -47,7 +48,7 @@ export const getFacturaById = async (req, res) => {
 // Actualizar una factura por su ID
 export const updateFactura = async (req, res) => {
     const { id } = req.params;
-    const { fechaEmision, monto, estado, servicioId } = req.body;
+    const { fechaEmision, monto, estado, files, servicioId } = req.body;
 
     try {
         let factura = await Factura.findById(id);
@@ -58,6 +59,7 @@ export const updateFactura = async (req, res) => {
         factura.fechaEmision = fechaEmision || factura.fechaEmision;
         factura.monto = monto || factura.monto;
         factura.estado = estado || factura.estado;
+        factura.files = files || factura.files;
         factura.servicioId = servicioId || factura.servicioId;
 
         await factura.save();

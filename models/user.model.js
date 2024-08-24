@@ -8,14 +8,15 @@ const userSchema = new mongoose.Schema({
     email: { type: String, required: true, unique: true },
     telefono: { type: String },
     password: { type: String, required: true },
+    profilePhoto: { type: String, default: null },
     rol: { 
         type: String, 
-        enum: ['Administrador', 'Cliente', 'Colaborador'], 
+        enum: ['Administrador', 'Cliente', 'Colaborador', 'Usuario'], 
         default: 'Usuario',
         required: true 
     },
-    clienteId: { type: mongoose.Schema.Types.ObjectId, ref: 'Cliente', required: false }, // No es obligatorio
-    colaboradorId: { type: mongoose.Schema.Types.ObjectId, ref: 'Colaborador', required: false }, // No es obligatorio
+    clienteId: { type: mongoose.Schema.Types.ObjectId, ref: 'Cliente', required: false }, 
+    colaboradorId: { type: mongoose.Schema.Types.ObjectId, ref: 'Colaborador', required: false }, 
 }, { timestamps: true });
 
 // Hash the password before saving the user model

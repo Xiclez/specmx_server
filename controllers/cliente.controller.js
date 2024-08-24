@@ -14,7 +14,6 @@ export const createCliente = async (req, res) => {
             NumeroInterior,
             CP, 
             telefono, 
-            email, 
             CURP, 
             RFC, 
             profilePhoto, 
@@ -22,9 +21,9 @@ export const createCliente = async (req, res) => {
             empresaId } = req.body;
 
     try {
-        const existingCliente = await Cliente.findOne({ email });
+        const existingCliente = await Cliente.findOne({ RFC });
         if (existingCliente) {
-            return res.status(400).json({ error: 'El correo electrónico ya está registrado para otro cliente' });
+            return res.status(400).json({ error: 'El RFC ya está registrado para otro cliente' });
         }
 
         const cliente = new Cliente({
@@ -40,7 +39,6 @@ export const createCliente = async (req, res) => {
             NumeroInterior,
             CP,
             telefono,
-            email,
             CURP,
             RFC,
             profilePhoto,
@@ -83,7 +81,7 @@ export const getClienteById = async (req, res) => {
 // Actualizar un cliente por su ID
 export const updateCliente = async (req, res) => {
     const { id } = req.params;
-    const { nombre, apellidoPaterno, apellidoMaterno, fechaNacimiento, EntidadFederativa, MunicipioDelegacion,Colonia,NombreVialidad,NumeroExterior,NumeroInterior,CP, telefono, email, CURP, RFC, profilePhoto, files, empresaId } = req.body;
+    const { nombre, apellidoPaterno, apellidoMaterno, fechaNacimiento, EntidadFederativa, MunicipioDelegacion,Colonia,NombreVialidad,NumeroExterior,NumeroInterior,CP, telefono, CURP, RFC, profilePhoto, files, empresaId } = req.body;
 
     try {
         let cliente = await Cliente.findById(id);
@@ -103,7 +101,6 @@ export const updateCliente = async (req, res) => {
         cliente.NumeroInterior = NumeroInterior || cliente.NumeroInterior;
         cliente.CP = CP || cliente.CP;
         cliente.telefono = telefono || cliente.telefono;
-        cliente.email = email || cliente.email;
         cliente.CURP = CURP || cliente.CURP;
         cliente.RFC = RFC || cliente.RFC;
         cliente.profilePhoto = profilePhoto || cliente.profilePhoto;

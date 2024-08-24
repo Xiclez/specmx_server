@@ -1,5 +1,9 @@
 import mongoose from 'mongoose';
 
+const fileSchema = new mongoose.Schema({
+    name: { type: String, required: false },
+    url: { type: String, required: false }
+});
 
 const empresaSchema = new mongoose.Schema({
     DenominacionRazonSocial: { type: String, default: null },
@@ -13,9 +17,9 @@ const empresaSchema = new mongoose.Schema({
     NumeroInterior: { type: String },
     CP: { type: String, required: true },
     telefono: { type: String, required: false },
-    email: { type: String, required: false, unique: true },
     RFC: { type: String, required: true },
     sector: { type: String, default: null },
+    files: [fileSchema],
 }, { timestamps: true });
 
 const Empresa = mongoose.model('Empresa', empresaSchema);

@@ -15,15 +15,15 @@ export const createEmpresa = async (req, res) => {
         NumeroInterior,
         CP,
         telefono,
-        email,
         RFC,
-        sector
+        sector, 
+        files
     } = req.body;
 
     try {
-        const existingEmpresa = await Empresa.findOne({ email });
+        const existingEmpresa = await Empresa.findOne({ RFC });
         if (existingEmpresa) {
-            return res.status(400).json({ error: 'El correo electrónico ya está registrado para otra empresa' });
+            return res.status(400).json({ error: 'El RFC ya está registrado para otra empresa' });
         }
 
         const empresa = new Empresa({
@@ -39,9 +39,9 @@ export const createEmpresa = async (req, res) => {
             NumeroInterior,
             CP,
             telefono,
-            email,
             RFC,
-            sector
+            sector,
+            files
         });
 
         await empresa.save();
@@ -92,9 +92,9 @@ export const updateEmpresa = async (req, res) => {
         NumeroInterior,
         CP, 
         telefono,
-        email,
         RFC,
-        sector
+        sector,
+        files
     } = req.body;
 
     try {
@@ -115,9 +115,9 @@ export const updateEmpresa = async (req, res) => {
         empresa.NumeroInterior = NumeroInterior || empresa.NumeroInterior;
         empresa.CP = CP || empresa.CP;
         empresa.telefono = telefono || empresa.telefono;
-        empresa.email = email || empresa.email;
         empresa.RFC = RFC || empresa.RFC;
         empresa.sector = sector || empresa.sector;
+        empresa.files = files || empresa.files;
 
         await empresa.save();
 
