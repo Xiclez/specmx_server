@@ -68,7 +68,7 @@ export const getCSFData = async (req, res) => {
         }
 
         // Datos de Identificación
-        $('#ubicacionForm\\:j_idt13\\:0\\:j_idt15 table tbody tr, #ubicacionForm\\:j_idt15\\:0\\:j_idt16 table tbody tr').each((i, elem) => {
+        $('#ubicacionForm\\:j_idt17\\:0\\:j_idt18\\:j_idt21 table tbody tr').each((i, elem) => {
             const key = $(elem).find('td').first().text().trim();
             const value = $(elem).find('td').last().text().trim();
             if (key.includes('CURP')) datosIdentificacion.CURP = value;
@@ -85,7 +85,7 @@ export const getCSFData = async (req, res) => {
         });
 
         // Datos de Ubicación
-        $('#ubicacionForm\\:j_idt13\\:1\\:j_idt15 table tbody tr').each((i, elem) => {
+        $('#ubicacionForm\\:j_idt17\\:1\\:j_idt18\\:j_idt21 table tbody tr').each((i, elem) => {
             const key = $(elem).find('td').first().text().trim();
             const value = $(elem).find('td').last().text().trim();
             if (key.includes('Entidad Federativa')) datosUbicacion.EntidadFederativa = value;
@@ -101,7 +101,7 @@ export const getCSFData = async (req, res) => {
         });
 
         // Características fiscales
-        $('#ubicacionForm\\:j_idt13\\:2\\:j_idt15 table tbody tr').each((i, elem) => {
+        $('#ubicacionForm\\:j_idt17\\:2\\:j_idt18\\:j_idt21 table tbody tr').each((i, elem) => {
             const key = $(elem).find('td').first().text().trim();
             const value = $(elem).find('td').last().text().trim();
             if (key.includes('Régimen')) {
@@ -124,27 +124,27 @@ export const getCSFData = async (req, res) => {
         caracteristicasFiscales = caracteristicasFiscales.filter(item => item.Regimen && item.FechaAlta);
 
         res.json({
-            Nombre: datosIdentificacion.Nombre,
-            ApellidoPaterno: datosIdentificacion.ApellidoPaterno,
+            Nombre: datosIdentificacion.Nombre || null,
+            ApellidoPaterno: datosIdentificacion.ApellidoPaterno || null,
             ApellidoMaterno: datosIdentificacion.ApellidoMaterno || null,
             FechaNacimiento: datosIdentificacion.FechaNacimiento || null,
-            DenominacionRazonSocial: datosIdentificacion.DenominacionRazonSocial,
-            RegimenCapital: datosIdentificacion.RegimenCapital,
+            DenominacionRazonSocial: datosIdentificacion.DenominacionRazonSocial || null,
+            RegimenCapital: datosIdentificacion.RegimenCapital || null,
             FechaConstitucion: datosIdentificacion.FechaConstitucion || null,
-            EntidadFederativa: datosUbicacion.EntidadFederativa,
-            MunicipioDelegacion: datosUbicacion.MunicipioDelegacion,
-            Colonia: datosUbicacion.Colonia,
-            NombreVialidad: datosUbicacion.NombreVialidad,
-            NumeroExterior: datosUbicacion.NumeroExterior,
+            EntidadFederativa: datosUbicacion.EntidadFederativa || null,
+            MunicipioDelegacion: datosUbicacion.MunicipioDelegacion || null,
+            Colonia: datosUbicacion.Colonia || null,
+            NombreVialidad: datosUbicacion.NombreVialidad || null,
+            NumeroExterior: datosUbicacion.NumeroExterior || null,
             NumeroInterior: datosUbicacion.NumeroInterior || null,
-            CP: datosUbicacion.CP,
+            CP: datosUbicacion.CP || null,
+            email: datosUbicacion.CorreoElectronico || null,
             CURP: datosIdentificacion.CURP || null,
-            RFC: datosIdentificacion.RFC
+            RFC: datosIdentificacion.RFC || null
         });
-        
+
     } catch (error) {
         console.error(error);
         res.status(500).send('Error en la consulta');
     }
 };
-
