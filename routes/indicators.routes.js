@@ -10,7 +10,7 @@ import {
 const router = express.Router();
 
 router.get('/ipc', getIpcData);
-router.get('/dof-usd',getDOFUSDData)
+router.post('/dof-usd',getDOFUSDData)
 router.get('/inpc',getINPCData)
 
 export default router;
